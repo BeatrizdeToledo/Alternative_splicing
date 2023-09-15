@@ -1,0 +1,127 @@
+# with Suppa2
+# Generate events
+# tama_sqanti.gtf - column 3 exon - column 9 "gene_id" and "transcript_id” 
+#Strict
+
+qlogin -q all.q -l h_rt=44:00:00 -l mem_free=70G -R yes -now n -pe smp 1
+
+python /share/apps/SUPPA/2.3.0/suppa.py generateEvents -i tama_sqanti.gtf -o tama_sqanti_suppa_Events_strict -f ioe -e SE SS MX RI FL 
+
+
+#Events Suppa2 Variable boundary
+
+python /share/apps/SUPPA/2.3.0/suppa.py generateEvents -i tama_sqanti.gtf -o tama_sqanti_Events_variable_3 -b V -t 3 -f ioe -e SE SS MX RI FL 
+python /share/apps/SUPPA/2.3.0/suppa.py generateEvents -i tama_sqanti.gtf -o tama_sqanti_Events_variable_6 -b V -t 6 -f ioe -e SE SS MX RI FL 
+
+
+#Put all the ioe events in the same file: I checked if the number of lines of each type of event is similar
+awk '
+FNR==1 && NR!=1 { while (/^<header>/) getline; }
+1 {print}
+' *.ioe > dt.suppa_Events_strict.ioe
+
+
+# DO PSI SEPARATED cell type, AND EVENT SEPARATED AND TOGETHER
+# take out the “” of the data matrix
+# expression file, and found a hidden TAB at the end of the first line.
+head 1_matrix_rename.TPM | cat -T
+cat 1_matrix_rename.TPM | sed 's/[ \t]L394/L394/g' > 1_matrix_rename2.TPM
+head 1_matrix_rename2.TPM | cat -T
+head 2_matrix_rename.TPM | cat -T
+cat 2_matrix_rename.TPM | sed 's/[ \t]L393/L393/g' > 2_matrix_rename2.TPM
+head 2_matrix_rename2.TPM | cat -T
+head 3_matrix_rename.TPM | cat -T
+cat 3_matrix_rename.TPM | sed 's/[ \t]L395/L395/g' > 3_matrix_rename2.TPM
+head 3_matrix_rename2.TPM | cat -T
+ 
+#Generate PSI per Event
+######?-f Minimum total expression of the transcripts involved in the event (Default is zero).
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict.ioe -o 1_dt.suppa_psiPerEventall
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict.ioe -o 2_dt.suppa_psiPerEventall
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict.ioe -o 3_dt.suppa_psiPerEventall
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_A3_strict.ioe -o 1_dt.suppa_psiPerEventA3
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_A3_strict.ioe -o 2_dt.suppa_psiPerEventA3
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_A3_strict.ioe -o 3_dt.suppa_psiPerEventA3
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_A5_strict.ioe -o 1_dt.suppa_psiPerEventA5
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_A5_strict.ioe -o 2_dt.suppa_psiPerEventA5
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_A5_strict.ioe -o 3_dt.suppa_psiPerEventA5
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_AL_strict.ioe -o 1_dt.suppa_psiPerEventAL
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_AL_strict.ioe -o 2_dt.suppa_psiPerEventAL
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_AL_strict.ioe -o 3_dt.suppa_psiPerEventAL
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_AF_strict.ioe -o 1_dt.suppa_psiPerEventAF
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_AF_strict.ioe -o 2_dt.suppa_psiPerEventAF
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_AF_strict.ioe -o 3_dt.suppa_psiPerEventAF
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_MX_strict.ioe -o 1_dt.suppa_psiPerEventMX
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_MX_strict.ioe -o 2_dt.suppa_psiPerEventMX
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_MX_strict.ioe -o 3_dt.suppa_psiPerEventMX
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_RI_strict.ioe -o 1_dt.suppa_psiPerEventRI
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_RI_strict.ioe -o 2_dt.suppa_psiPerEventRI
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_RI_strict.ioe -o 3_dt.suppa_psiPerEventRI
+
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 1_matrix_rename2.TPM -i dt.suppa_Events_strict_SE_strict.ioe -o 1_dt.suppa_psiPerEventSE
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 2_matrix_rename2.TPM -i dt.suppa_Events_strict_SE_strict.ioe -o 2_dt.suppa_psiPerEventSE
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerEvent -e 3_matrix_rename2.TPM -i dt.suppa_Events_strict_SE_strict.ioe -o 3_dt.suppa_psiPerEventSE
+
+
+## Important to have PSI and TPM files per condition, if I didn’t have would have to split
+##perform the differential splicing analysis
+
+# -gc -i ./annotation/ensembl_hg19.events.ioe -p TRA2_KD_events.psi TRA2_NC_events.psi -e TRA2_KD_iso.tpm TRA2_NC_iso.tpm -o TRA2_diffSplice
+
+## Leila code: python3 /projects/leila_alt_sp_nsc/SUPPA-master/suppa.py diffSplice --method empirical --ioe Suppa_events/_SE_strict.ioe --psi Suppa_psi/PP/PP.SE.psi Suppa_psi/1/1.SE.psi Suppa_psi/N/N.SE.psi --expression-file PP.txt 1.txt N.txt --area 1000 --lower-bound 0.05 -gc -o Suppa_1si/SE
+
+
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict.ioe -p 2_dt.suppa_psiPerEventall.psi 1_dt.suppa_psiPerEventall.psi 3_dt.suppa_psiPerEventall.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_Eventall_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_A3_strict.ioe -p 2_dt.suppa_psiPerEventA3.psi 1_dt.suppa_psiPerEventA3.psi 3_dt.suppa_psiPerEventA3.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventA3_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_A3_strict.ioe -p 2_dt.suppa_psiPerEventA3.psi 1_dt.suppa_psiPerEventA3.psi 3_dt.suppa_psiPerEventA3.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventA3_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_A5_strict.ioe -p 2_dt.suppa_psiPerEventA5.psi 1_dt.suppa_psiPerEventA5.psi 3_dt.suppa_psiPerEventA5.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventA5_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_AL_strict.ioe -p 2_dt.suppa_psiPerEventAL.psi 1_dt.suppa_psiPerEventAL.psi 3_dt.suppa_psiPerEventAL.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventAL_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_AF_strict.ioe -p 2_dt.suppa_psiPerEventAF.psi 1_dt.suppa_psiPerEventAF.psi 3_dt.suppa_psiPerEventAF.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventAF_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_MX_strict.ioe -p 2_dt.suppa_psiPerEventMX.psi 1_dt.suppa_psiPerEventMX.psi 3_dt.suppa_psiPerEventMX.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventMX_strict_1si
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_RI_strict.ioe -p 2_dt.suppa_psiPerEventRI.psi 1_dt.suppa_psiPerEventRI.psi 3_dt.suppa_psiPerEventRI.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventRI_strict
+python /share/apps/SUPPA/2.3.0/suppa.py diffSplice -m empirical -i dt.suppa_Events_strict_SE_strict.ioe -p 2_dt.suppa_psiPerEventSE.psi 1_dt.suppa_psiPerEventSE.psi 3_dt.suppa_psiPerEventSE.psi -e 2_matrix_rename2.TPM 1_matrix_rename2.TPM 3_matrix_rename2.TPM --area 1000 --lower-bound 0.05 -gc -o dt.suppa_EventSE_strict
+
+#Do the same thing but by isoform
+# Leila code #python3 /projects/leila_alt_sp_nsc/SUPPA-master/suppa.py psiPerIsoform -g Mus_musculus.GRCm38.81.gtf -e  PP.txt -o Suppa_psi/PP/Isoforms
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerIsoform -g tama_sqanti.gtf -e 2_matrix_rename2.TPM -o 2_dt.suppa_psiPerIsoforms
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerIsoform -g tama_sqanti.gtf -e 1_matrix_rename2.TPM -o 1_dt.suppa_psiPerIsoforms
+python /share/apps/SUPPA/2.3.0/suppa.py psiPerIsoform -g tama_sqanti.gtf -e 3_matrix_rename2.TPM -o 3_dt.suppa_psiPerIsoforms
+
+#Check is I have separated tmp files, is so run: python3 /projects/leila_alt_sp_nsc/SUPPA-master/suppa.py joinFiles -f psi -i Suppa_dpsi/A3.dpsi.temp.0 Suppa_dpsi/A3.dpsi.temp.1  -o Suppa_dpsi/A3.dpsi 
+
+#group
+# suppa.py clusterEvents --dpsi <dpsi-file> --psivec <psivec-file> --sig-threshold <0.05> --eps <0.05> --min-pts <20> --groups <1-3,4-6> -o <output-file> 
+
+#python3 /projects/leila_alt_sp_nsc/SUPPA-master/suppa.py clusterEvents --dpsi  Suppa_dpsi/all.events.dpsi --psivec Suppa_dpsi/all.events.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6 -o Suppa_dpsi/all.events.cluster
+
+# I will delete the lines with NA and solve the problem., but then there is a problem in the cluster
+
+#ERROR:lib.cluster_tools:Unknown error: (<class 'ValueError'>, ValueError("Input contains NaN, infinity or a value too large for dtype('float64').",), <traceback object at 0x7f6080a71f48>)
+#Have you tried removing the events with only nan's in the input file? As you mentioned, maybe there are events with all nan's within a group - with one or more numbers in samples from other groups
+#--lower-bound flag will directly ignore events that do not have above the chosen deltaPSI threshold. It could be that some of the cases included by the -nan filter end up in this bag and are not tested.
+#the empirical test won't use the pairings. It is not implemented. The paired test is only possible with the classical test.
+#I just checked the code; diffSplice currently check if a path is absolute, if it is not then it use the current working path; therefore the error may indeed be caused by using a relative path (that is not the current working directory).
+#Also, is the GTF of this form? https://github.com/comprna/SUPPA#input-files
+#ERROR:lib.cluster_tools:Unknown error: (<class 'ValueError'>, ValueError("Input contains NaN, infinity or a value too large for dtype('float64').",), <traceback object at 0x7f1e3f70de48>)
+#So I suggest clusterEvents add nan filtering function to make the analysis workflow more smooth.
+#For performing a pairwise comparison between each pair of adjacent conditions, you should indicate in the command line --combination or -c.
+#We haven't tested it on 3.6. I don't know if that could be the issue.
+#-nan | --nan-threshold: Proportion of samples with nan values allowed per condition to calculate a DeltaPSI (Default: 0, i.e. no missing values allowed).
+
+#ERROR:lib.cluster_tools:Unknown error: (<class 'ValueError'>, ValueError("Input contains NaN, infinity or a value too large for dtype('float64').",), <traceback object at 0x2b9b5e3bec88>)
+
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_Eventall_strict_dpsi.dpsi -p dt.suppa_Eventall_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_Eventall_strict_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventA3_strict_dpsi.dpsi —p dt.suppa_EventA3_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventA3_strict_dpsi_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventA5_strict_dpsi.dpsi —p dt.suppa_EventA5_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -odt.suppa_EventA5_strict_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventAL_strict_dpsi.dpsi —p dt.suppa_EventAL_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventAL_strict_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventAF_strict_dpsi.dpsi —p dt.suppa_EventAF_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventAF_strict_dpsi_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventMX_strict_dpsi.dpsi —p dt.suppa_EventMX_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventMX_strict_dpsi_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventRI_strict_dpsi.dpsi —p dt.suppa_EventRI_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventRI_strict_dpsi_cluster
+python /share/apps/SUPPA/2.3.0/suppa.py clusterEvents --dpsi dt.suppa_EventSE_strict_dpsi.dpsi —p dt.suppa_EventSE_strict_dpsi.psivec --sig-threshold 0.05 --eps 0.05 --min-pts 20 --groups 1-3,4-6,7-9 -o dt.suppa_EventSE_strict_dpsi_cluster
+
